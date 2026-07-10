@@ -1,4 +1,4 @@
-import CategoryItem from "./components/category-item.component";
+import Directory from "./components/directory/directory.component";
 
 const App = () => {
   const categories = [
@@ -27,15 +27,10 @@ const App = () => {
       "title": "mens",
       "imageUrl": "https://i.ibb.co/R70vBrQ/men.png"
     }
-  ]
-    ;
+  ];
 
   return (
-    <div className='categories-container'>
-      {categories.map(({ title, id, imageUrl }) => {
-        return <CategoryItem key={id} category={({ title, imageUrl })} />
-      })};
-    </div>
+    <Directory categories={categories} />
   );
 };
 
