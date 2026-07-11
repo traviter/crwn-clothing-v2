@@ -31,7 +31,7 @@ export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
 
     const cartItemCount = cartItems.reduce((total, cartItem) => total + cartItem.quantity, 0);
-    const cartSubtotal = cartItems.reduce((total, cartItem) => total + cartItem.price, 0);
+    const cartSubtotal = cartItems.reduce((total, cartItem) => total + cartItem.price * cartItem.quantity, 0);
 
     const addItemToCart = (productToAdd, quantity = 1) => {
         setCartItems(addCartItem(cartItems, productToAdd, quantity));

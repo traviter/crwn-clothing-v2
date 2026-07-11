@@ -8,22 +8,16 @@ import CheckoutItem from '../../components/checkout-item/checkout-item.component
 const Checkout = () => {
     const { cartSubtotal, cartItems } = useContext(CartContext);
     return (
-        <div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Description</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Remove</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {cartItems.map((cartItem) => <CheckoutItem key={cartItem.id} cartItem={cartItem} />)}
-                </tbody>
-            </table>
-            <div>${cartSubtotal}</div>
+        <div className='checkout-container'>
+            <div className='checkout-header'>
+                <div className='header-block'><span>Product</span></div>
+                <div className='header-block'><span>Description</span></div>
+                <div className='header-block'><span>Quantity</span></div>
+                <div className='header-block'><span>Price</span></div>
+                <div className='header-block'><span>Remove</span></div>
+            </div>
+            {cartItems.map((cartItem) => <CheckoutItem key={cartItem.id} cartItem={cartItem} />)}
+            <div className='total'>Total: ${cartSubtotal}</div>
         </div>
     );
 }
