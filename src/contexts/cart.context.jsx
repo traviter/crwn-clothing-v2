@@ -1,7 +1,5 @@
 import { createContext, useState, useContext } from 'react'
 
-import PRODUCTS from '../shop-data.json'
-
 const addCartItem = (cartItems, productToAdd, quantity = 1) => {
     var index = cartItems.findIndex((cartItem) => cartItem.id == productToAdd.id);
     cartItems = [...cartItems]
