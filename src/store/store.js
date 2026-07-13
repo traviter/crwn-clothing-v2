@@ -3,6 +3,7 @@ import logger from 'redux-logger';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'
 
+import { isDevEnvironment, getReduxCompose } from '../utils/environment/environment.utils';
 import { rootReducer } from './root-reducer';
 
 const persistConfig = {
@@ -13,8 +14,10 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-const middleWares = [logger];
-const composedEnhancers = compose(applyMiddleware(...middleWares));
+const middleWares = isDevEnvironment() ? [logger] : [];
+const composeEnhancer = isDevEnvironment() && getReduxCompose() || compose;
+
+const composedEnhancers = composeEnhancer(applyMiddleware(...middleWares));
 export const store = createStore(persistedReducer, undefined, composedEnhancers);
 
 export const persistor = persistStore(store);
