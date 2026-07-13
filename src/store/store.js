@@ -1,5 +1,6 @@
 import { compose, createStore, applyMiddleware } from 'redux';
 import logger from 'redux-logger';
+import { thunk } from 'redux-thunk';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'
 
@@ -14,7 +15,9 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-const middleWares = isDevEnvironment() ? [logger] : [];
+const middleWares = isDevEnvironment() ? [logger, thunk] : [thunk];
+
+
 const composeEnhancer = isDevEnvironment() && getReduxCompose() || compose;
 
 const composedEnhancers = composeEnhancer(applyMiddleware(...middleWares));
