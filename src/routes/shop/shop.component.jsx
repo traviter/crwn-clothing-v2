@@ -8,7 +8,7 @@ import { fetchCategoriesAsync } from '../../store/categories/categories.action';
 
 const Shop = () => {
     const dispatch = useDispatch();
-    useEffect(() => dispatch(fetchCategoriesAsync()), []);
+    useEffect(() => fetchCategoriesAsync(dispatch), []);
     return (
         <Routes>
             <Route index element={<CategoriesPreview />} />
