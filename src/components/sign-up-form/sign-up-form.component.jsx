@@ -1,10 +1,13 @@
-import { useState, useContext } from 'react';
-import { createAuthUserWithEmailAndPassword, createUserDocumentFromAuth } from '../../utils/firebase/firebase.utils';
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { clearUserError, signupStart } from '../../store/user/user.action';
 
 import './sign-up-form.styles.scss'
 
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
+import { selectCurrentUser, selectUserError } from '../../store/user/user.selector';
 
 const defaultFormFields = {
     displayName: '',
@@ -14,30 +17,34 @@ const defaultFormFields = {
 }
 
 const SignUpForm = () => {
+    const dispatch = useDispatch();
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { displayName, email, password, confirmPassword } = formFields;
+
+    const userError = useSelector(selectUserError);
+    useEffect(() => {
+        if (userError?.code === 'auth/email-already-in-use') {
+            alert('Cannot create user.  Email already in use');
+            dispatch(clearUserError());
+        }
+    }, [userError, dispatch]);
+
+    const currentUser = useSelector(selectCurrentUser);
+    useEffect(() => {
+        resetFormFields();
+    }, [currentUser]);
 
     const resetFormFields = () => setFormFields(defaultFormFields)
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (password != confirmPassword) {
+        if (password !== confirmPassword) {
             alert("Passwords do not match")
             return;
         }
 
-        try {
-            const { user } = await createAuthUserWithEmailAndPassword(email, password);
-            await createUserDocumentFromAuth(user, { displayName });
-            resetFormFields();
-        } catch (error) {
-            if (error.code == 'auth/email-already-in-use') {
-                alert('Cannot create user.  Email already in use')
-            }
-            console.log('user creation encountered an error', error)
-        }
-
+        dispatch(signupStart(email, password));
     }
 
     const handleChange = (event) => {

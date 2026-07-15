@@ -1,15 +1,14 @@
-import { useState } from 'react';
-import {
-    auth,
-    signInWithGooglePopup,
-    signInAuthUserWithEmailAndPassword,
-    createUserDocumentFromAuth
-} from "../../utils/firebase/firebase.utils";
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearUserError, emailSigninStart, googleSigninStart } from '../../store/user/user.action';
+
 
 import './sign-in-form.styles.scss'
 
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
+
+import { selectUserError, selectCurrentUser } from '../../store/user/user.selector';
 
 const defaultFormFields = {
     email: '',
@@ -17,8 +16,23 @@ const defaultFormFields = {
 }
 
 const SignInForm = () => {
+    const dispatch = useDispatch();
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { email, password } = formFields;
+
+
+    const userError = useSelector(selectUserError);
+    useEffect(() => {
+        if (userError?.code === 'auth/invalid-credential') {
+            alert("Invalid email or password");
+            dispatch(clearUserError());
+        }
+    }, [userError, dispatch]);
+
+    const currentUser = useSelector(selectCurrentUser);
+    useEffect(() => {
+        resetFormFields();
+    }, [currentUser]);
 
     const resetFormFields = () => setFormFields(defaultFormFields)
     const onFormFieldChange = (event) => {
@@ -28,20 +42,10 @@ const SignInForm = () => {
 
     const logInWithCredentials = async (event) => {
         event.preventDefault();
-        try {
-            const { user } = await signInAuthUserWithEmailAndPassword(email, password);
-            resetFormFields();
-        } catch (error) {
-            if (error.code == 'auth/invalid-credential') {
-                alert("Invalid email or password");
-            }
-            console.log("Error logging in with credentials", error);
-        }
+        dispatch(emailSigninStart(email, password));
     }
 
-    const logInWithGoogleUser = async () => {
-        const { user } = await signInWithGooglePopup();
-    }
+    const logInWithGoogleUser = () => dispatch(googleSigninStart());
 
     return (
         <div className='sign-in-container'>
